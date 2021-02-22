@@ -40,14 +40,17 @@
 	 chunk.size = 0;
          CURL *curl = curl_easy_init();
 	 char *myurl = "https://freesound.org/apiv2/oauth2/access_token/";
-	 char *mypost = "client_id=1k4d2Azct3D650WgIFbh" ;
+	 char *mypost = "client_id=1k4d2Azct3D650WgIFbh&client_secret=bgTSKIoy9dgSWhJhJSSgyHhyvBBJuyNewNkjjaBx&grant_type=authorization_code&code=" ;
+	 mypost = strcat(mypost, argv[1]);
+	 printf("\n\nPOST: %s\n\n", mypost);
 	 char resul[10000] = "";
+	 /*
 	 if(curl) {
 		 CURLcode res;
 		 curl_easy_setopt(curl, CURLOPT_URL, myurl);
 		 curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writedata);
 		 curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
-		 curl_easy_setopt(curl, CURLOPT_POSTFIELDS, mypost);
+		 //curl_easy_setopt(curl, CURLOPT_POSTFIELDS, mypost);
                  res = curl_easy_perform(curl);
 		 if (res != CURLE_OK) {
 			 fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
@@ -55,10 +58,12 @@
 		 else {
 			 printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
 		 }
+		 
 
 		 curl_easy_cleanup(curl);
 		 free(chunk.memory);
 	 }
+	 */
 	 printf("\n\nHello world!\n\n");
 	 curl_global_cleanup();
 	 return 0;
