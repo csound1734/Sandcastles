@@ -53,8 +53,8 @@ int main(int argc, char **argv) {
 	 if(curl) {
 		 CURLcode res;
 		 curl_easy_setopt(curl, CURLOPT_URL, myurl);
-		 curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writedata);
-		 curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
+		 //curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writedata);
+		 //curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
 		 curl_easy_setopt(curl, CURLOPT_POSTFIELDS, result);
                  res = curl_easy_perform(curl);
 		 if (res != CURLE_OK) {
@@ -68,6 +68,5 @@ int main(int argc, char **argv) {
 		 curl_easy_cleanup(curl);
 		 free(chunk.memory);
 	 }
-	 curl_easy_cleanup(curl);
 	return 0;
 }
