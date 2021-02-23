@@ -8,30 +8,22 @@
 	 size_t size;
  } ;
 
- size_t writedata(void *contents, size_t size, size_t nmemb, void *userp) {
-	 size_t realsize = size*nmemb;
-	 struct MemoryString *mem = (struct MemoryString *)userp;
-	 char *ptr = realloc(mem->memory, mem->size + realsize + 1);
-	 if(ptr == NULL) {
-		 /* out of memory! */
-		 printf("not enough memory");
-		 return 0;
-	 }
-	 mem->memory = ptr;
-	 memcpy(&(mem->memory[mem->size]), contents, realsize);
-	 mem->size += realsize;
-	 mem->memory[mem->size] = 0;
-	 return realsize;
- }
+int write_data(void *contents, size_t size, size_t nmemb, void *stream) {
+	size_t written = fwrite(contents, size, nmemb, (FILE *)stream);
+	printf("\nin callback function, writing data from curl now\n");
+	return written;
+}
+
 
 int main(int argc, char **argv) {
 	char accessToken[100];
 	int i;
-	struct MemoryString chunk;
 	char header[10000];
 	struct curl_slist *myslist = NULL;
-	char *myurl = "https://freesound.org/apiv2/sounds/213524/";
+	char *myurl = "https://freesound.org/apiv2/sounds/213524/download/";
 	char *hstrt = "Authorization: Bearer ";
+	static const char *filename = "out.wav";
+	FILE *file;
 	 CURL *curl;
 	if (argc<2) {
 		printf("\nNo access token detected!\n");
@@ -46,28 +38,29 @@ int main(int argc, char **argv) {
 		}
 	}
 	 printf("\nAccess Token Detected: %s\n\n", accessToken);
+	 curl_global_init(CURL_GLOBAL_ALL);
 	 curl = curl_easy_init();	
 	 snprintf(header, sizeof(header), "%s%s", hstrt, accessToken);
 	 printf("\n\nHEADER: %s\n\n", header);
 	 myslist = curl_slist_append(myslist, "Accept: ");
 	 myslist = curl_slist_append(myslist, header);
 	 if(curl) {
-		 CURLcode res;
-		 curl_easy_setopt(curl, CURLOPT_HTTPHEADER, myslist);
-		 curl_easy_setopt(curl, CURLOPT_URL, myurl);
-		 curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-		 //curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writedata);
-		 //curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
-                 res = curl_easy_perform(curl);
-		 if (res != CURLE_OK) {
-			 fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-			 }
-		 else {
-			 printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
+		 file = fopen(filename, "wb");
+		 if (file) {
+		         CURLcode res;
+		         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, myslist);
+		         curl_easy_setopt(curl, CURLOPT_URL, myurl);
+		         curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+		         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+		         curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+                         res = curl_easy_perform(curl);
+		         if (res != CURLE_OK) {
+			         fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+			         } 
+		         curl_easy_cleanup(curl);
+			 curl_global_cleanup();
 		 }
-		 
-
-		 curl_easy_cleanup(curl);
+		 fclose(file);
 	 }
 	return 0;
 }
