@@ -28,11 +28,7 @@ int main(int argc, char **argv) {
 	char result[10000];
 	char accessToken[100];
 	int i;
-	struct MemoryString chunk;
-	char header[10000];
-	struct curl_slist *myslist = NULL;
-	char *myurl = "https://freesound.org/apiv2/sounds/213524/";
-	char *hstrt = "Authorization: Bearer ";
+	 struct MemoryString chunk;
 	 CURL *curl;
 	if (argc<2) {
 		printf("\nNo access token detected!\n");
@@ -47,22 +43,19 @@ int main(int argc, char **argv) {
 		}
 	}
 	 printf("\nAccess Token Detected: %s\n\n", accessToken);
-	// chunk.memory = malloc(1);
-	// chunk.size = 0;
-	 curl = curl_easy_init();	
-	 snprintf(header, sizeof(header), "%s%s", hstrt, accessToken);
-	 //char *mypost = "client_id=1k4d2Azct3D650WgIFbh&client_secret=bgTSKIoy9dgSWhJhJSSgyHhyvBBJuyNewNkjjaBx&grant_type=authorization_code&code=";
-	 //snprintf(result, sizeof(result), "%s%s", mypost, accessToken);
-	 printf("\n\nHEADER: %s\n\n", header);
-	 myslist = curl_slist_append(myslist, "Accept: ");
-	 myslist = curl_slist_append(myslist, header);
+	 chunk.memory = malloc(1);
+	 chunk.size = 0;
+	 curl = curl_easy_init();
+	 char *myurl = "https://freesound.org/apiv2/oauth2/access_token/";
+	 char *mypost = "client_id=1k4d2Azct3D650WgIFbh&client_secret=bgTSKIoy9dgSWhJhJSSgyHhyvBBJuyNewNkjjaBx&grant_type=authorization_code&code=";
+	 snprintf(result, sizeof(result), "%s%s", mypost, accessToken);
+	 printf("\n\nPOST: %s\n\n", result);
 	 if(curl) {
 		 CURLcode res;
-		 curl_easy_setopt(curl, CURLOPT_HTTPHEADER, myslist);
 		 curl_easy_setopt(curl, CURLOPT_URL, myurl);
-		 curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 		 //curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writedata);
 		 //curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
+		 curl_easy_setopt(curl, CURLOPT_POSTFIELDS, result);
                  res = curl_easy_perform(curl);
 		 if (res != CURLE_OK) {
 			 fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
@@ -73,7 +66,7 @@ int main(int argc, char **argv) {
 		 
 
 		 curl_easy_cleanup(curl);
-		 // free(chunk.memory);
+		 free(chunk.memory);
 	 }
 	return 0;
 }
