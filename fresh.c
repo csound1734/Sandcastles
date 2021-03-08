@@ -24,6 +24,12 @@
 	 return realsize;
  }
 
+size_t header_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
+	size_t numbytes = size * nmemb;
+        printf("%.*s\n", numbytes, ptr);
+        return numbytes;
+}
+
 int main(int argc, char **argv) {
 	char result[10000];
 	char refreshToken[100];
@@ -54,6 +60,8 @@ int main(int argc, char **argv) {
 		 //curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writedata);
 		 //curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
 		 curl_easy_setopt(curl, CURLOPT_POSTFIELDS, result);
+		 curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header_callback);
+		 curl_easy_setopt(curl, CURLOPT_HEADERDATA, headerbuf);
                  res = curl_easy_perform(curl);
 		 if (res != CURLE_OK) {
 			 fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
