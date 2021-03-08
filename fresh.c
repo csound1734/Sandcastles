@@ -33,6 +33,7 @@ size_t header_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
 int main(int argc, char **argv) {
 	char result[10000];
 	char refreshToken[100];
+	char headerbuf[10000];
 	int i;
 	 struct MemoryString chunk;
 	 CURL *curl;
