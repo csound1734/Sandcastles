@@ -36,6 +36,9 @@ int main(int argc, char **argv) {
 	char headerbuf[10000];
 	int i;
 	 struct MemoryString chunk;
+	 struct MemoryString headchk;
+	 headchk.memory = (char *)malloc(10000*sizeof(char));
+	 headchk.size = 10000*sizeof(char);
 	 CURL *curl;
 	if (argc<2) {
 		printf("\nNo refresh token detected!\n");
