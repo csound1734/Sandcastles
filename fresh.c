@@ -77,6 +77,7 @@ int main(int argc, char **argv) {
 
 		 curl_easy_cleanup(curl);
 		 free(chunk.memory);
+		 free(headchk.memory);
 	 }
 	return 0;
 }
