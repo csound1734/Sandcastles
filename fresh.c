@@ -26,7 +26,16 @@
 
 size_t header_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
 	size_t numbytes = size * nmemb;
-        printf("%.*s\n", numbytes, ptr);
+	struct MemoryString *userp = (struct MemoryString *)userdata;
+	size_t initsize = userp->size;
+	//printf("Initial size: %d Bytes\n", initsize);
+	int i = 0;
+	for (i=0; i<(int)nmemb; i++) {
+		*(userp->memory + i + initsize) = *(ptr + i);
+		printf("%c", *(userp->memory + i));
+		userp->size++;
+	}
+	printf("%d", userp->size);
         return numbytes;
 }
 
@@ -37,8 +46,9 @@ int main(int argc, char **argv) {
 	int i;
 	 struct MemoryString chunk;
 	 struct MemoryString headchk;
+	 FILE *houtf = fopen(".rightnow-sndcsl", "w");
 	 headchk.memory = (char *)malloc(10000*sizeof(char));
-	 headchk.size = 10000*sizeof(char);
+	 headchk.size = 0;
 	 CURL *curl;
 	if (argc<2) {
 		printf("\nNo refresh token detected!\n");
@@ -65,13 +75,13 @@ int main(int argc, char **argv) {
 		 //curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
 		 curl_easy_setopt(curl, CURLOPT_POSTFIELDS, result);
 		 curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header_callback);
-		 curl_easy_setopt(curl, CURLOPT_HEADERDATA, headerbuf);
+		 curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headchk);
                  res = curl_easy_perform(curl);
 		 if (res != CURLE_OK) {
 			 fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
 			 }
 		 else {
-			 printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
+			 printf("%lu bytes retrieved\n", (unsigned long)headchk.size);
 		 }
 		 
 
@@ -79,5 +89,6 @@ int main(int argc, char **argv) {
 		 free(chunk.memory);
 		 free(headchk.memory);
 	 }
+	 fclose(houtf);
 	return 0;
 }
