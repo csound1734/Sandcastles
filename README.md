@@ -3,7 +3,9 @@ Compile the .c files with the -lcurl flag set to create the executables.
 E.g.
 
 `gcc -lcurl -o first first.c`
+
 `gcc -lcurl -o first fresh.c`
+
 `gcc -lcurl -o first down1.c`
 
 # Refreshing a current access token
