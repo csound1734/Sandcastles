@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
 	int i;
 	char header[10000];
 	struct curl_slist *myslist = NULL;
-	char *myurl = "https://freesound.org/apiv2/sounds/213524/download/";
+	char *myurl = "https://freesound.org/apiv2/sounds/561210/download/";
 	char *hstrt = "Authorization: Bearer ";
 	static const char *filename = "out.wav";
 	FILE *file;
