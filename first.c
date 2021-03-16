@@ -8,6 +8,8 @@
 	 size_t size;
  } ;
 
+void getCode(char *, int, char **, const char *);
+
  size_t writedata(void *contents, size_t size, size_t nmemb, void *userp) {
 	 size_t realsize = size*nmemb;
 	 struct MemoryString *mem = (struct MemoryString *)userp;
@@ -26,30 +28,19 @@
 
 int main(int argc, char **argv) {
 	char result[10000];
-	char accessToken[100];
+	char authCode[100];
 	int i;
 	 struct MemoryString chunk;
+	 printf("fist (Sandcastles)\n\n(If you dont have an authorization code yet, visit:\nhttps://freesound.org/apiv2/oauth2/authorize/?client_id=1k4d2Azct3D650WgIFbh&response_type=code\n\nSign into your freesound account, then click Authorize. Copy the authorization code you see on the next screen.)\n");
 	 CURL *curl;
-	if (argc<2) {
-		printf("\nNo access token detected!\n");
-		printf("To obtain an access token, copy and paste the following URL into your browser:\n");
-		printf("\nhttps://freesound.org/apiv2/oauth2/authorize/?client_id=1k4d2Azct3D650WgIFbh&response_type=code\n");
-		printf("\nThen click the Authorize button and the access token will appear on the screen.\n");
-		printf("Enter access token now. Copy and paste it and press enter:\n");
-		scanf("%s", accessToken);
-	} else {
-		for (i=0; argv[1][i]!='\0'; i++) {
-			accessToken[i] = argv[1][i] ;
-		}
-	}
-	 printf("\nAccess Token Detected: %s\n\n", accessToken);
+	 getCode(authCode, argc, argv, "authorization code");
 	 chunk.memory = malloc(1);
 	 chunk.size = 0;
 	 curl = curl_easy_init();
 	 char *myurl = "https://freesound.org/apiv2/oauth2/access_token/";
 	 char *mypost = "client_id=1k4d2Azct3D650WgIFbh&client_secret=bgTSKIoy9dgSWhJhJSSgyHhyvBBJuyNewNkjjaBx&grant_type=authorization_code&code=";
-	 snprintf(result, sizeof(result), "%s%s", mypost, accessToken);
-	 printf("\n\nPOST: %s\n\n", result);
+	 snprintf(result, sizeof(result), "%s%s", mypost, authCode);
+	 //printf("\n\nPOST: %s\n\n", result);
 	 if(curl) {
 		 CURLcode res;
 		 curl_easy_setopt(curl, CURLOPT_URL, myurl);
