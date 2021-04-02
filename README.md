@@ -1,39 +1,25 @@
-Compile the .c files with the -lcurl flag set to create the executables.
+# Tutorial 1 - first program
 
-E.g.
+The "first" program (that's its name) gets you an access token if you don't already have one.
+Let's compile it. These instructions are for Mac OS X. Linux will be very similar, and Windows should also be transferrable. 
+The code should be cross-platform. These instructions assume that libcurl and its headers are installed and included in the PATH.
 
-`gcc -lcurl -o first first.c`
+`gcc -lcurl -I include/ -o example_first first.c misc.c`
 
-`gcc -lcurl -o fresh fresh.c`
+*Note: misc.c is a small local library of functions used across these programs. The local header files are found in the include/ directory, including misc.h - thus is -I flag.*
 
-`gcc -lcurl -o down1 down1.c`
+The output of "first" is ultimately a buffer of JSON data. Included in the data is an access token good for 24 hours and a refresh token (used to ask for a new access token) good for 24 hours. 
+As long as you refresh every 24 hours or sooner you never need to deal with auth codes again. 
+If the deadline passess the access token will expire and you will need to start over again by getting a new temporary auth code, running the "first" executible again, and so on.
 
-# Refreshing a current access token
-If you access token is stil current (see last few lines of outputfeb22 to check this),
-
-`./fresh {{ACCESS_TOKEN}} ` to get a refresh access token. Refresh once every 24 hours at least.
-(this comes from the fresh.c source file, of course)
-
-# Getting a new access token
-First use your web browser to visit:
-
-`https://freesound.org/apiv2/oauth2/authorize/?client_id=1k4d2Azct3D650WgIFbh&response_type=code`
-
-It will ask you to log in to Freesound with your Freesound account, then ask you for authorization for Sandcastles. Click Authorize. The next page will give you an authorization code. Copy it. The authorization code is only good for 10 minutes. The rest of getting an access token can be done with the executibles created by this repo. read on.
-
-In your terminal type ./first then paste the authorization code. first is a c program that asks you for an authorization code and then gets an access token (good for 24 hours and comes with refresh token). When you run first and give it an authorization code, your access token arrives inside of the header when curl gets a response. Save the response that curl prints to stdout when you run first. 
-
-By the way, if you forget and run first with only one argument (i.e. without an authorization code), first will ask you for an authorization code and give you the URL shown above. It will wait for you to come back and enter the authorization code before proceeding as usual to get the access token.
-
-# Using sound resources with a current access token
-
-Once you have an access token avilable
-
-`./sandcastles_down1` is an executible (source code: down1.c) representing a simple download. The sound
- will be downloaded into out.wav, which will be overwritten if it exists.
 
 # How to get an authorization code (good for only 10 minutes - tradable for access token)
 
+Prior to running the first program (e.g. running ./first on Mac or Linux) you can visit the following link ot get your temporary auth code beforehand. "First" will give you the same URL and ask you to retreive the auth code when you run it anyway. If you do this first, you can paste in the auth code right away when first asks you for it.
+
+*Note: if you already have the temporary auth code, you can actually paste it into the first command-line argument when you run the executible. If you don't, first will just ask you for it as soon as it starts up.*
+
+Link to get the temporary auth code:
 [Click this link to be directed to freesound.org](https://freesound.org/apiv2/outh2/authorize/?client_id=1k4d2Azct3D650WgIFbh&response_type=code)
 Once there, you will be asked to sign in using your freesound account and then authorize the app from inside your account.
 If you click authorize, freesound will give you the temporary authorization code.
