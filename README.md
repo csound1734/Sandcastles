@@ -32,4 +32,8 @@ Once you have an access token avilable
 `./sandcastles_down1` is an executible (source code: down1.c) representing a simple download. The sound
  will be downloaded into out.wav, which will be overwritten if it exists.
 
+# How to get an authorization code (good for only 10 minutes - tradable for access token)
 
+[Click this link to be directed to freesound.org](https://freesound.org/apiv2/outh2/authorize/?client_id=1k4d2Azct3D650WgIFbh&response_type=code)
+Once there, you will be asked to sign in using your freesound account and then authorize the app from inside your account.
+If you click authorize, freesound will give you the temporary authorization code.
