@@ -20,7 +20,8 @@ int main(int argc, char **argv) {
 	int i;
 	char header[10000];
 	struct curl_slist *myslist = NULL;
-	char *myurl = "https://freesound.org/apiv2/sounds/213524/download/";
+	char *myurl = "https://freesound.org/apiv2/sounds/"; // snprintf(myurl_new, sizeof(myurl_new), "%s%d/download/", myurl, 213524);
+	char o_url[10000];
 	char *hstrt = "Authorization: Bearer ";
 	static const char *filename = "out.wav";
 	FILE *file;
@@ -45,11 +46,17 @@ int main(int argc, char **argv) {
 	 myslist = curl_slist_append(myslist, "Accept: ");
 	 myslist = curl_slist_append(myslist, header);
 	 if(curl) {
+
+		 int down = 213524; //default value just in case
+		 printf("\n\nNOW PLEASE INPUT THE NUMBER OF A SOUND FROM FREESOUND.ORG ON THE LINE BELOW\n");
+		 scanf("%d", &down);
+		 snprintf(o_url, sizeof(o_url), "%s%d/bookmark/", myurl, down);
+
 		 file = fopen(filename, "wb");
 		 if (file) {
 		         CURLcode res;
 		         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, myslist);
-		         curl_easy_setopt(curl, CURLOPT_URL, myurl);
+		         curl_easy_setopt(curl, CURLOPT_URL, o_url);
 		         curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 		         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 		         curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
